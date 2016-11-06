@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import Dict, Set  # noqa
 
 from src.Message import AcceptMessage
+from src.Value import Value  # noqa
 
 
 class Learner(object):
@@ -12,9 +13,9 @@ class Learner(object):
     def __init__(self, uid: str, quorum_size: int) -> None:
         self.uid = uid
         self.quorum_size = quorum_size
-        self.learned_value = None  # type: int
+        self.learned_value = None  # type: Value
         self.proposals = defaultdict(
-            lambda: set())  # type: Dict[int, Set[str]]
+            lambda: set())  # type: Dict[Value, Set[str]]
 
     def receive_accepted(self, accept_message: AcceptMessage):
         """

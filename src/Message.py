@@ -1,6 +1,7 @@
 from abc import ABCMeta
 
 from src.ProposalID import ProposalID
+from src.Value import Value
 
 
 class PaxosMessage(object):
@@ -33,7 +34,7 @@ class AckMessage(PaxosMessage):
             sender_uid: str,
             proposal_id: ProposalID,
             previous_proposal_id: ProposalID = None,
-            previous_value: int = None
+            previous_value: Value = None
     ) -> None:
         self.sender_uid = sender_uid
         self.proposal_id = proposal_id
@@ -47,7 +48,7 @@ class AcceptMessage(PaxosMessage):
     """
 
     def __init__(self, sender_uid: str, proposal_id: ProposalID,
-                 value: int) -> None:
+                 value: Value) -> None:
         self.sender_uid = sender_uid
         self.proposal_id = proposal_id
         self.value = value
@@ -58,6 +59,11 @@ class AckValueMessage(PaxosMessage):
     P2b(n)
     """
 
-    def __init__(self, sender_uid: str, proposal_id: ProposalID) -> None:
+    def __init__(
+            self,
+            sender_uid: str,
+            proposal_id: ProposalID,
+            proposal_value: Value) -> None:
         self.sender_uid = sender_uid
         self.proposal_id = proposal_id
+        self.proposal_value = proposal_value

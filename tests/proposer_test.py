@@ -18,7 +18,7 @@ class ProposerTests(unittest.TestCase):
     def test_propose_value(self):
         assert self.proposer.proposed_value is None
         self.proposer.propose_value(42)
-        assert self.proposer.proposed_value == 42
+        assert self.proposer.proposed_value.value == 42
 
     def test_prepare(self):
         self.proposer.proposal_id.number = 42
@@ -53,3 +53,14 @@ class ProposerTests(unittest.TestCase):
         assert len(self.proposer.ack_messages) == 1
         assert self.proposer.highest_accepted_id == ProposalID('C', 13)
         assert self.proposer.proposed_value == 44
+
+    def test_can_propose_any_message(self):
+        self.proposer.proposal_id.number = 10
+        self.proposer.propose_value(42)
+        prepare_msg = self.proposer.prepare()
+        ack_message = AckMessage('B', prepare_msg.proposal_id)
+        self.proposer.receive_ack_message(ack_message)
+        ack_message2 = AckMessage('C', prepare_msg.proposal_id)
+        accept_message = self.proposer.receive_ack_message(ack_message2)
+        assert accept_message.value.value == -1
+        assert accept_message.value.is_any
