@@ -52,3 +52,4 @@ class Acceptor(object):
             return AckValueMessage(self.uid,
                                    ProposalID(self.uid, 0),
                                    Value(value))
+        return None

@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import Dict, Set  # noqa
 
-from src.Message import AcceptMessage
+from src.Message import AckValueMessage
 from src.Value import Value  # noqa
 
 
@@ -17,14 +17,16 @@ class Learner(object):
         self.proposals = defaultdict(
             lambda: set())  # type: Dict[Value, Set[str]]
 
-    def receive_accepted(self, accept_message: AcceptMessage):
+    def receive_accepted(self, ack_value_msg: AckValueMessage):
         """
         Called when receiving P2b AcceptMessage
         """
         if self.completed:
             return
 
-        self.proposals[accept_message.value].add(accept_message.sender_uid)
+        self.proposals[ack_value_msg.proposal_value.value].add(
+            ack_value_msg.sender_uid)
 
-        if len(self.proposals[accept_message.value]) == self.quorum_size:
-            self.learned_value = accept_message.value
+        if len(self.proposals[
+                   ack_value_msg.proposal_value.value]) == self.quorum_size:
+            self.learned_value = ack_value_msg.proposal_value.value

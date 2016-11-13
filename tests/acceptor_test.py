@@ -3,7 +3,7 @@ import unittest
 from src.Acceptor import Acceptor
 from src.Message import PrepareMessage, AcceptMessage
 from src.ProposalID import ProposalID
-from src.Value import Value, ANY
+from src.Value import ANY
 
 
 class ProposerTests(unittest.TestCase):
@@ -42,16 +42,20 @@ class ProposerTests(unittest.TestCase):
     def test_receive_accept_initial(self):
         proposal_id = ProposalID('A', 10)
         self.acceptor.receive_prepare(PrepareMessage('A', proposal_id))
-        self.acceptor.receive_accept(AcceptMessage('A', proposal_id, Value(42)))
+        self.acceptor.receive_accept(AcceptMessage('A', proposal_id, 42))
         assert self.acceptor.promised_id == proposal_id
-        assert self.acceptor.promised_value.value == 42
+        assert self.acceptor.promised_value == 42
 
     def test_receive_accept_greater_than_promised(self):
         self.acceptor.receive_prepare(PrepareMessage('A', ProposalID('A', 10)))
         self.acceptor.receive_accept(
-            AcceptMessage('C', ProposalID('C', 15), Value(50)))
+            AcceptMessage('C', ProposalID('C', 15), 50))
         assert self.acceptor.promised_id == ProposalID('C', 15)
-        assert self.acceptor.promised_value.value == 50
+        assert self.acceptor.promised_value == 50
+
+    def test_ignores_request_without_any(self):
+        ack_value_msg = self.acceptor.receive_request(42)
+        assert ack_value_msg is None
 
     def test_receive_request_when_having_any(self):
         self.acceptor.promised_value = ANY

@@ -2,6 +2,7 @@ import unittest
 
 from src.Message import ProposalID, AckMessage
 from src.Proposer import Proposer
+from src.Value import Value
 
 
 class ProposerTests(unittest.TestCase):
@@ -48,11 +49,11 @@ class ProposerTests(unittest.TestCase):
         self.proposer.propose_value(42)
         prepare_msg = self.proposer.prepare()
         ack_message = AckMessage('B', prepare_msg.proposal_id,
-                                 ProposalID('C', 13), 44)
+                                 ProposalID('C', 13), Value(44))
         self.proposer.receive_ack_message(ack_message)
         assert len(self.proposer.ack_messages) == 1
         assert self.proposer.highest_accepted_id == ProposalID('C', 13)
-        assert self.proposer.proposed_value == 44
+        assert self.proposer.proposed_value.value == 44
 
     def test_can_propose_any_message(self):
         self.proposer.proposal_id.number = 10

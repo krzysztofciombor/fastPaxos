@@ -58,6 +58,7 @@ class Proposer(object):
             if ack_message.previous_value is not None:
                 self.proposed_value = ack_message.previous_value
 
+        # Check if consensus is reached
         if len(self.ack_messages) == self.quorum_size:
             if self._can_send_any_message():
                 return AcceptMessage(self.uid, self.proposal_id, ANY)
