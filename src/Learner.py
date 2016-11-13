@@ -2,7 +2,6 @@ from collections import defaultdict
 from typing import Dict, Set  # noqa
 
 from src.Message import AckValueMessage
-from src.Value import Value  # noqa
 
 
 class Learner(object):
@@ -13,9 +12,9 @@ class Learner(object):
     def __init__(self, uid: str, quorum_size: int) -> None:
         self.uid = uid
         self.quorum_size = quorum_size
-        self.learned_value = None  # type: Value
+        self.learned_value = None  # type: int
         self.proposals = defaultdict(
-            lambda: set())  # type: Dict[Value, Set[str]]
+            lambda: set())  # type: Dict[int, Set[str]]
 
     def receive_accepted(self, ack_value_msg: AckValueMessage):
         """
@@ -27,6 +26,6 @@ class Learner(object):
         self.proposals[ack_value_msg.proposal_value.value].add(
             ack_value_msg.sender_uid)
 
-        if len(self.proposals[
-                   ack_value_msg.proposal_value.value]) == self.quorum_size:
+        if len(self.proposals[ack_value_msg.proposal_value.value]) == \
+                self.quorum_size:
             self.learned_value = ack_value_msg.proposal_value.value

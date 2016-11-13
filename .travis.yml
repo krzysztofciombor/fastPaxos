@@ -7,6 +7,6 @@ install: "pip install -r requirements.txt"
 #run flake8
 before_script: 
     - flake8 .
-    - mypy tests/
+    - mypy tests/ src/
 #run tests
 script: nosetests

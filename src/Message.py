@@ -48,7 +48,7 @@ class AcceptMessage(PaxosMessage):
     """
 
     def __init__(self, sender_uid: str, proposal_id: ProposalID,
-                 value: int) -> None:
+                 value: Value) -> None:
         self.sender_uid = sender_uid
         self.proposal_id = proposal_id
         self.value = value
