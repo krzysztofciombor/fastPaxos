@@ -1,3 +1,5 @@
+from IPython import embed
+
 class ProposalID(object):
     def __init__(self, sender: str, number: int) -> None:
         self.sender = sender
