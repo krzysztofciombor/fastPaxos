@@ -7,7 +7,9 @@ from config import INSTANCES
 
 app = Flask(__name__)
 
-LEADER_URL = INSTANCES[0]
+
+def select_leader():
+    return INSTANCES[0]  # TODO check heartbeats
 
 
 @app.route('/heartbeat')
@@ -15,9 +17,20 @@ def hello_world():
     return 'Hello World!'
 
 
+@app.route('/api/reset', methods=['GET'])
+def reset():
+    for instance_url in INSTANCES:
+        try:
+            requests.get(instance_url + '/reset')
+        except requests.ConnectionError:
+            pass
+    return '', 200
+
+
 @app.route('/api/get_value', methods=['GET'])
 def get_value():
-    response = requests.get(LEADER_URL + '/get_learned_value')
+    leader = select_leader()
+    response = requests.get(leader + '/get_learned_value')
     if response.status_code == 200:
         return response.content, 200
     else:
@@ -26,8 +39,13 @@ def get_value():
 
 @app.route('/api/propose_value', methods=['POST'])
 def propose_value_client():
-    requests.post(LEADER_URL + '/propose_value', request.values)
-    response = requests.post(LEADER_URL + '/prepare')
+    leader_url = select_leader()
+    if not leader_url:
+        abort(433)
+
+    # PREPARE LEADER
+    requests.post(leader_url + '/propose_value', request.values)
+    response = requests.post(leader_url + '/prepare')
     prepare_msg = response.content
     acc_msg = None
     # FIRST PHASE
@@ -36,7 +54,7 @@ def propose_value_client():
                                  {"prepare_msg": prepare_msg})
         ack_msg = response.content
         if ack_msg:
-            response = requests.post(LEADER_URL + '/receive_ack',
+            response = requests.post(leader_url + '/receive_ack',
                                      {"ack_msg": ack_msg})
             if response.status_code == 200:
                 acc_msg = response.content

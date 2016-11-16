@@ -72,12 +72,23 @@ def get_learned_value():
         abort(404)
 
 
+@app.route('/reset', methods=['GET'])
+def reset():
+    instance.reset()
+    return '', 200
+
+
 class Instance(object):
     active = True  # type: bool
 
     def __init__(self, uid: str, quorum_size: int) -> None:
         self.uid = uid
         self.quorum_size = quorum_size
+        self.proposer = Proposer(self.uid, self.quorum_size)
+        self.acceptor = Acceptor(self.uid)
+        self.learner = Learner(self.uid, self.quorum_size)
+
+    def reset(self):
         self.proposer = Proposer(self.uid, self.quorum_size)
         self.acceptor = Acceptor(self.uid)
         self.learner = Learner(self.uid, self.quorum_size)
