@@ -8,7 +8,7 @@ from src.Acceptor import Acceptor
 from src.Learner import Learner
 from src.Message import PrepareMessage, AcceptMessage, AckMessage, \
     AckValueMessage
-from src.Paxos import get_classic_quorum_size
+from src.Paxos import get_fast_quorum_size
 from src.Proposer import Proposer
 
 app = Flask(__name__)
@@ -43,6 +43,16 @@ def receive_ack_message():
     acc_msg = instance.receive_ack_message(msg)
     if acc_msg:
         return jsonpickle.encode(acc_msg), 200
+    else:
+        abort(422)
+
+
+@app.route('/receive_request', methods=['POST'])
+def receive_fast_request():
+    value = request.values.get('value')
+    ack_value_msg = instance.receive_request(value)
+    if ack_value_msg:
+        return jsonpickle.encode(ack_value_msg), 200
     else:
         abort(422)
 
@@ -126,6 +136,10 @@ class Instance(object):
         ack_value = self.acceptor.receive_accept(accept_message)
         return ack_value
 
+    def receive_request(self, value: int) -> Optional[AckValueMessage]:
+        ack_value_msg = self.acceptor.receive_request(value)
+        return ack_value_msg
+
     # Learner methods delegation
 
     def receive_accepted(self, ack_value_msg: AckValueMessage):
@@ -138,5 +152,5 @@ if __name__ == '__main__':
         sys.exit(1)
     port = int(sys.argv[1])
     instances = int(sys.argv[2])
-    instance = Instance(str(port), get_classic_quorum_size(instances))
+    instance = Instance(str(port), get_fast_quorum_size(instances))
     app.run(debug=True, host='0.0.0.0', port=port)

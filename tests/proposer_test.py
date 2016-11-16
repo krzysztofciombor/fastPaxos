@@ -57,7 +57,6 @@ class ProposerTests(unittest.TestCase):
 
     def test_can_propose_any_message(self):
         self.proposer.proposal_id.number = 10
-        self.proposer.propose_value(42)
         prepare_msg = self.proposer.prepare()
         ack_message = AckMessage('B', prepare_msg.proposal_id)
         self.proposer.receive_ack_message(ack_message)
