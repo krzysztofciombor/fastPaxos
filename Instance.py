@@ -41,7 +41,10 @@ def receive_ack_message():
     msg_json = request.values.get('ack_msg')
     msg = jsonpickle.decode(msg_json)
     acc_msg = instance.receive_ack_message(msg)
-    return jsonpickle.encode(acc_msg), 200
+    if acc_msg:
+        return jsonpickle.encode(acc_msg), 200
+    else:
+        abort(422)
 
 
 @app.route('/receive_acc', methods=['POST'])
@@ -97,7 +100,6 @@ class Instance(object):
     def receive_ack_message(self,
                             ack_message: AckMessage
                             ) -> Optional[AcceptMessage]:
-        print("ACK: {}".format(self.proposer.proposal_id))
         acc_msg = self.proposer.receive_ack_message(ack_message)
         return acc_msg
 

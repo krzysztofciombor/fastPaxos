@@ -35,8 +35,11 @@ def propose_value_client():
         response = requests.post(instance_url + '/receive_prepare',
                                  {"prepare_msg": prepare_msg})
         ack_msg = response.content
-        acc_msg = requests.post(LEADER_URL + '/receive_ack',
-                                {"ack_msg": ack_msg}).content
+        if ack_msg:
+            response = requests.post(LEADER_URL + '/receive_ack',
+                                     {"ack_msg": ack_msg})
+            if response.status_code == 200:
+                acc_msg = response.content
     # SECOND PHASE
     if acc_msg:  # TODO: Can we break from the above loop earlier?
         for instance_url in INSTANCES:
