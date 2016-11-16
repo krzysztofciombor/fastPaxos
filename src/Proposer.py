@@ -73,7 +73,10 @@ class Proposer(object):
         for ack in self.ack_messages:
             if ack.previous_value:
                 return False
-        return True
+        if self.proposed_value is None:
+            return True
+        else:
+            return False
 
     def _should_ignore_ack_message(self, ack_message: AckMessage) -> bool:
         """
