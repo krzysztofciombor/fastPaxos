@@ -15,3 +15,7 @@ class ProposalID(object):
         if other is None:
             return True
         return self.number > other.number
+
+    def __repr__(self):
+        return "ProposalID(sender={}, number={})".format(self.sender,
+                                                         self.number)

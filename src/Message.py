@@ -58,6 +58,11 @@ class AckValueMessage(PaxosMessage):
     P2b(n)
     """
 
-    def __init__(self, sender_uid: str, proposal_id: ProposalID) -> None:
+    def __init__(
+            self,
+            sender_uid: str,
+            proposal_id: ProposalID,
+            proposal_value: int) -> None:
         self.sender_uid = sender_uid
         self.proposal_id = proposal_id
+        self.proposal_value = proposal_value
