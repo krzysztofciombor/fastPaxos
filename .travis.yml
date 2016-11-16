@@ -1,12 +1,15 @@
 language: python
 python:
-    - "3.5"
-#install dependencies
-install: "pip install -r requirements.txt"
-
-#run flake8
-before_script: 
-    - flake8 .
-    - mypy tests/
-#run tests
+- '3.5'
+install: pip install -r requirements.txt
+addons:
+  ssh_known_hosts: 138.68.98.172
+before_script:
+- openssl aes-256-cbc -K $encrypted_2f90dfa97d65_key -iv $encrypted_2f90dfa97d65_iv
+  -in deploy_key.enc -out deploy_key -d
+- bash _scripts/install.sh
+- flake8 .
+- mypy tests/
 script: nosetests
+after_success:
+- bash _scripts/deploy.sh
