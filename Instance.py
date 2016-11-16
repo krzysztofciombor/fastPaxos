@@ -66,8 +66,9 @@ def receive_ack_value_message():
 @app.route('/get_learned_value', methods=['GET'])
 def get_learned_value():
     value = instance.learner.learned_value
+    print("Learned value: {}".format(value))
     if value:
-        return value, 200
+        return str(value), 200
     else:
         abort(404)
 
@@ -127,8 +128,8 @@ class Instance(object):
 
     # Learner methods delegation
 
-    def receive_accepted(self, accept_message: AcceptMessage):
-        self.learner.receive_accepted(accept_message)
+    def receive_accepted(self, ack_value_msg: AckValueMessage):
+        self.learner.receive_accepted(ack_value_msg)
 
 
 if __name__ == '__main__':
