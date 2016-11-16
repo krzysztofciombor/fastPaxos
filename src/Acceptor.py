@@ -37,4 +37,6 @@ class Acceptor(object):
         if accept_message.proposal_id >= self.promised_id:
             self.promised_id = accept_message.proposal_id
             self.promised_value = accept_message.value
-            return AckValueMessage(self.uid, self.promised_id)
+            return AckValueMessage(self.uid,
+                                   self.promised_id,
+                                   self.promised_value)

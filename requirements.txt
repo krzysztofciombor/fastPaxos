@@ -4,3 +4,4 @@ mypy-lang
 Flask
 ipython
 requests
+jsonpickle
