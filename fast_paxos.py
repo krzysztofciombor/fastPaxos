@@ -14,8 +14,8 @@ def select_leader():
 
 def get(url, params=None):
     try:
-        return requests.get(url, params)
-    except requests.ConnectionError:
+        return requests.get(url, params, timeout=10)
+    except requests.RequestException:
         return None
 
 
