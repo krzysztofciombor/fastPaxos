@@ -54,7 +54,7 @@ def reset():
                 get(instance_url + '/kill')
             else:
                 get(instance_url + '/reset')
-    if case == '3':
+    elif case == '3':
         for index, instance_url in enumerate(instances):
             if index == 2 or index == 4:
                 get(instance_url + '/poison')
