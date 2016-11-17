@@ -14,8 +14,12 @@ def main(value=None):
         print(response.content)
 
 
-def reset():
-    requests.get(BASE_URL + '/reset')
+def reset(test_case_num=0):
+    requests.get(BASE_URL + '/reset/case=' + str(test_case_num))
+
+
+def get_value():
+    return requests.get(BASE_URL + '/get_value').content
 
 
 if __name__ == '__main__':
