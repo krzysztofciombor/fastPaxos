@@ -1,17 +1,16 @@
 import requests
+import sys
 from flask import Flask, request, abort  # type: ignore
-
-from config import INSTANCES
-
+from config import BASE_URL
 from IPython import embed
 
 # use embed() to set up interactive endpoint
 
 app = Flask(__name__)
-
+instances = []
 
 def select_leader():
-    return INSTANCES[0]  # TODO check heartbeats
+    return instances[0]  # TODO check heartbeats
 
 
 def get(url, params=None):
@@ -35,8 +34,7 @@ def hello_world():
 
 @app.route('/api/reset', methods=['GET'])
 def reset():
-    embed()
-    for instance_url in INSTANCES:
+    for instance_url in instances:
         get(instance_url + '/reset')
     return '', 200
 
@@ -64,7 +62,7 @@ def propose_value_client():
     prepare_msg = response.content
     acc_msg = None
     # FIRST PHASE
-    for instance_url in INSTANCES:
+    for instance_url in instances:
         response = post(instance_url + '/receive_prepare',
                         {"prepare_msg": prepare_msg})
         ack_msg = response.content if response else None
@@ -75,13 +73,13 @@ def propose_value_client():
                 acc_msg = response.content
     # SECOND PHASE
     if acc_msg:  # TODO: Can we break from the above loop earlier?
-        for instance_url in INSTANCES:
+        for instance_url in instances:
             response = post(instance_url + '/receive_acc',
                             {"acc_msg": acc_msg})
             ack_value_msg = response.content if response else None
             if ack_value_msg:  # TODO: HACK, every Instance should send this
                 # message itself, but it would break threading
-                for instance_url2 in INSTANCES:
+                for instance_url2 in instances:
                     post(instance_url2 + '/receive_ack_value',
                          {"ack_value_msg": ack_value_msg})
 
@@ -89,4 +87,15 @@ def propose_value_client():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', processes=10)
+    if len(sys.argv) < 3:
+        print("Specify port and number of instances as arguments")
+        sys.exit(1)
+
+    port = int(sys.argv[1])
+    instance_count = int(sys.argv[2])
+
+    for x in range(1, instance_count + 1):
+        instance_port = port + x
+        instances.append("{}:{}".format(BASE_URL, instance_port))
+
+    app.run(debug=True, host='0.0.0.0', processes=10, port=port)
