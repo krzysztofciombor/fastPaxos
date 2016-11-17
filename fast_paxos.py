@@ -21,15 +21,15 @@ def select_leader():
 
 def get(url, params=None):
     try:
-        return requests.get(url, params, timeout=10)
+        return requests.get(url, params, timeout=3)
     except requests.RequestException:
         return None
 
 
 def post(url, params=None):
     try:
-        return requests.post(url, params)
-    except requests.ConnectionError:
+        return requests.post(url, params, timeout=3)
+    except requests.RequestException:
         return None
 
 
