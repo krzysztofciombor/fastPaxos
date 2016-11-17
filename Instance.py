@@ -10,14 +10,19 @@ from src.Message import PrepareMessage, AcceptMessage, AckMessage, \
     AckValueMessage
 from src.Paxos import get_classic_quorum_size
 from src.Proposer import Proposer
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app)
 instance = None  # initialized in main
 
 
 @app.route('/heartbeat', methods=['GET'])
 def heartbeat():
-    return "Instance is working with quorum: " + str(instance.quorum_size), 200
+    if instance.get_active() is True:
+        return "Instance is working with quorum: " + str(instance.quorum_size), 200
+    else:
+        abort(404)
 
 
 @app.route('/propose_value', methods=['POST'])

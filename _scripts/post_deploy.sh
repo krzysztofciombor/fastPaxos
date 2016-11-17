@@ -10,5 +10,4 @@ do
   nohup ./start_instance.sh $i 6 > /dev/null &
 done
 
-nohup ./start_test_instances.sh > /dev/null &
 exit 0

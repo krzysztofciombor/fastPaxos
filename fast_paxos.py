@@ -3,10 +3,14 @@ import sys
 from flask import Flask, request, abort  # type: ignore
 from config import BASE_URL
 from IPython import embed
+from flask import render_template
+from flask_cors import CORS, cross_origin
+import json
 
 # use embed() to set up interactive endpoint
 
 app = Flask(__name__)
+CORS(app)
 instances = []
 
 def select_leader():
@@ -27,10 +31,18 @@ def post(url, params=None):
         return None
 
 
+@app.route('/')
+def home():
+    # flip this flag to test on local
+    return render_template('home.html', local=json.dumps(False))
+
+
 @app.route('/heartbeat')
 def hello_world():
     return 'Coordinator is working', 200
 
+
+# API
 
 @app.route('/api/reset', methods=['GET'])
 def reset():
