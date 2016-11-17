@@ -15,7 +15,7 @@ def main(value=None):
 
 
 def reset(test_case_num=0):
-    requests.get(BASE_URL + '/reset/case=' + str(test_case_num))
+    requests.get(BASE_URL + '/reset?case=' + str(test_case_num))
 
 
 def get_value():
