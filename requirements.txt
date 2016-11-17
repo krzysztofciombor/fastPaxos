@@ -5,3 +5,4 @@ Flask
 ipython
 requests
 jsonpickle
+flask-cors

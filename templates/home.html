@@ -1,0 +1,350 @@
+<!doctype html>
+<head>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <title>Fast Paxos demonstration</title>
+
+  <style type="text/css">
+    .jumbotron {
+      margin-top: 20px;
+    }
+
+    .tab-content {
+      margin-top: 20px;
+    }
+
+    body {
+      padding-bottom: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Fast Paxos</h1>
+      <h2>Authors: Krzysztof Ciombor, Michał Krężelewski</h2>
+    </div>
+
+    <div>
+      <ul class="nav nav-tabs" role="tablist">
+         <li role="presentation" class="active"><a href="#first"aria-controls="first" role="tab" data-toggle="tab">First test case</a></li>
+        {% for id in ["second", "third", "fourth"] %}
+          <li role="presentation"><a href="#{{id}}" aria-controls="{{ id }}" role="tab" data-toggle="tab">{{id.capitalize() + " test case"}}</a></li>
+        {% endfor %}
+      </ul>
+
+
+      <div class="tab-content">
+
+        <!-- FIRST -->
+        <div role="tabpanel" class="tab-pane active" id="first">
+          <div class="col-md-10 col-md-offset-1">
+            <h3> Six node consensus </h3>
+
+            <div class="description">
+              <p>
+                Six nodes, no failures
+              </p>
+            </div>
+
+            <div class="test-content">
+              <table class="table table-bordered" id="second_table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Node State</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for id in range(1, 7) %}
+                    <tr id="row_{{id}}">
+                      <td>{{id}}</td>
+                      <td class="state warning">UNKNOWN</td>
+                      <td class="value warning">UNAVAILABLE</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <div class="text-center">
+                <button class="btn btn-large btn-success">Start experiment</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECOND -->
+        <div role="tabpanel" class="tab-pane" id="second">
+          <div class="col-md-10 col-md-offset-1">
+            <h3> Six node consensus with failure </h3>
+
+            <div class="description">
+              <p>
+                Six nodes in cluster, two inactive from the beginning
+              </p>
+            </div>
+
+            <div class="test-content">
+              <table class="table table-bordered" id="third_table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Node State</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for id in range(1, 7) %}
+                    <tr id="row_{{id}}">
+                      <td>{{id}}</td>
+                      <td class="state warning">UNKNOWN</td>
+                      <td class="value warning">UNAVAILABLE</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <div class="text-center">
+                <button class="btn btn-large btn-success">Start experiment</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- THIRD -->
+        <div role="tabpanel" class="tab-pane" id="third">
+          <div class="col-md-10 col-md-offset-1">
+            <h3> Six node consensus with failure </h3>
+
+            <div class="description">
+              <p>
+                Six nodes in cluster, two fail after communication start
+              </p>
+            </div>
+
+            <div class="test-content">
+              <table class="table table-bordered" id="fourth_table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Node State</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for id in range(1, 7) %}
+                    <tr id="row_{{id}}">
+                      <td>{{id}}</td>
+                      <td class="state warning">UNKNOWN</td>
+                      <td class="value warning">UNAVAILABLE</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <div class="text-center">
+                <button class="btn btn-large btn-success">Start experiment</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+         <!-- FOURTH -->
+        <div role="tabpanel" class="tab-pane" id="fourth">
+          <div class="col-md-10 col-md-offset-1">
+            <h3> Six node consensus with failure </h3>
+
+            <div class="description">
+              <p>
+                Six nodes in cluster, all active, two values proposed at the same time
+              </p>
+            </div>
+
+            <div class="test-content">
+              <table class="table table-bordered" id="fourth_table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Node State</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for id in range(1, 7) %}
+                    <tr id="row_{{id}}">
+                      <td>{{id}}</td>
+                      <td class="state warning">UNKNOWN</td>
+                      <td class="value warning">UNAVAILABLE</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <div class="text-center">
+                <button class="btn btn-large btn-success">Start experiment</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $('#first button').on('click', function() {
+      start_experiment(1, 6);
+    });
+
+    $('#second button').on('click', function() {
+      start_experiment(2, 6);
+    });
+
+    $('#third button').on('click', function() {
+      start_experiment(3, 6);
+    });
+
+    $('#fourth button').on('click', function() {
+      start_experiment(4, 6);
+    });
+
+    var FastPaxos = {};
+    FastPaxos.active_intervals = [];
+    FastPaxos.intervals_allowed = true;
+    FastPaxos.names = ["zero", "first", "second", "third", "fourth"]
+
+    var start_experiment = function(number, nodes_count) {
+      clear_intervals();
+      reset_coordinator(number);
+      mark_nodes_unknown(number, nodes_count);
+
+      setTimeout(function() {
+        start_checking_nodes_availibility(number, nodes_count);
+        start_asking_for_value(number, nodes_count);
+        start_proposing_values(number);
+      }, 1000);
+    };
+
+    var clear_intervals = function() {
+      FastPaxos.intervals_allowed = false;
+      $.each(FastPaxos.active_intervals, function(index, value) {
+        window.clearTimeout(value);
+      });
+      FastPaxos.intervals_allowed = true;
+    }
+
+    var reset_coordinator = function(number) {
+      $.ajax({url: coordinator_url(number) + "/reset?case=" + number, async: false});
+    };
+
+    var start_checking_nodes_availibility = function(number, nodes_count) {
+      for (var i = 1 ; i <= nodes_count ; i++) {
+        check_node_availibility(number, i);
+      }
+    };
+
+    var mark_nodes_unknown = function(number, nodes_count) {
+      for (var i = 1 ; i <= nodes_count ; i++) {
+        mark_node(number, i, "state", "warning", "UNKNOWN");
+        mark_node(number, i, "value", "warning", "UNAVAILABLE");
+      }
+    }
+
+    var check_node_availibility = function(test_number, node_number) {
+      var url = node_url(test_number, node_number) + "/heartbeat";
+      $.get(url).done(function() {
+        mark_node_available(test_number, node_number);
+        if (FastPaxos.intervals_allowed) {
+          FastPaxos.active_intervals.push(setTimeout(function() {
+            check_node_availibility(test_number, node_number);
+          }, 2000));
+        }
+      }).fail(function() {
+        mark_node_unavailable(test_number, node_number);
+      });
+    };
+
+    var mark_node_available = function(test_number, node_number) {
+      mark_node(test_number, node_number, "state", "success", "AVAILABLE")
+    }
+
+    var mark_node_unavailable = function(test_number, node_number) {
+      mark_node(test_number, node_number, "state", "danger", "FAILED")
+    }
+
+    var mark_node_value = function(test_number, node_number, value) {
+      mark_node(test_number, node_number, "value", "success", value)
+    }
+
+    var mark_node = function(test_number, node_number, node_kind, new_css_class, text) {
+      var pane_id = "#" + FastPaxos.names[test_number]
+      var cell = $(pane_id + " #row_" + node_number + " ." + node_kind);
+
+      cell.removeClass();
+      cell.addClass(node_kind);
+      cell.addClass(new_css_class);
+      cell.text(text);
+    }
+
+    var start_asking_for_value = function(number, nodes_count) {
+      for (var i = 1 ; i <= nodes_count ; i++) {
+        check_node_value(number, i);
+      }
+    };
+
+    var check_node_value = function(test_number, node_number) {
+      var url = node_url(test_number, node_number) + "/get_learned_value";
+      $.get(url).done(function(data) {
+        mark_node_value(test_number, node_number, data);
+        if (FastPaxos.intervals_allowed) {
+          FastPaxos.active_intervals.push(setTimeout(function() {
+            check_node_value(test_number, node_number);
+          }, 3000));
+        }
+      }).fail(function() {
+        mark_node(test_number, node_number, "value", "warning", "UNAVAILABLE");
+        if (FastPaxos.intervals_allowed) {
+          FastPaxos.active_intervals.push(setTimeout(function() {
+            check_node_value(test_number, node_number);
+          }, 1000));
+        }
+      });
+    };
+
+    var start_proposing_values = function(number) {
+      $.post(coordinator_url(number) + "/propose_value?value=" + Math.floor(Math.random() * 1000));
+
+      if (number == 4) {
+        $.post(coordinator_url(number) + "/propose_value?value=" + Math.floor(Math.random() * 1000));
+      }
+    }
+
+    var coordinator_url = function(number) {
+      var x =  {{ local }};
+      if (x) {
+        var host = '127.0.0.1';
+      } else {
+        var host = '138.68.98.172';
+      }
+      var base_port = 5000;
+
+      return "http://" + host + ":" + base_port + "/api";
+    };
+
+    var node_url = function(test_case_number, node_number) {
+      var x =  {{ local }};
+      if (x) {
+        var host = '127.0.0.1';
+      } else {
+        var host = '138.68.98.172';
+      }
+      var base_port = 5000;
+
+      return "http://" + host + ":" + (base_port + node_number);
+    }
+  </script>
+</body>

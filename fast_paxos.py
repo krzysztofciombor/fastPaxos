@@ -1,15 +1,22 @@
+import json
+import sys
+
 import requests
 from flask import Flask, request, abort  # type: ignore
+from flask import render_template
+from flask_cors import CORS
 
-from config import INSTANCES
+from config import BASE_URL
 
 # use embed() to set up interactive endpoint
 
 app = Flask(__name__)
+CORS(app)
+instances = []
 
 
 def select_leader():
-    return INSTANCES[0]  # TODO check heartbeats
+    return instances[0]  # TODO check heartbeats
 
 
 def get(url, params=None):
@@ -26,19 +33,38 @@ def post(url, params=None):
         return None
 
 
+@app.route('/')
+def home():
+    # flip this flag to test on local
+    return render_template('home.html', local=json.dumps(False))
+
+
 @app.route('/heartbeat')
 def hello_world():
-    return 'Hello World!'
+    return 'Coordinator is working', 200
 
 
-def _reset():
-    for instance_url in INSTANCES:
-        get(instance_url + '/reset')
-
+# API
 
 @app.route('/api/reset', methods=['GET'])
 def reset():
-    _reset()
+    case = request.values.get('case')
+
+    if case == '2':
+        for index, instance_url in enumerate(instances):
+            if index == 3 or index == 5:
+                get(instance_url + '/kill')
+            else:
+                get(instance_url + '/reset')
+    if case == '3':
+        for index, instance_url in enumerate(instances):
+            if index == 2 or index == 4:
+                get(instance_url + '/poison')
+            else:
+                get(instance_url + '/reset')
+    else:
+        for instance_url in instances:
+            get(instance_url + '/reset')
     prepare_fast()
     return '', 200
 
@@ -64,7 +90,7 @@ def propose_value_classic():
     prepare_msg = response.content
     acc_msg = None
     # FIRST PHASE
-    for instance_url in INSTANCES:
+    for instance_url in instances:
         response = post(instance_url + '/receive_prepare',
                         {"prepare_msg": prepare_msg})
         ack_msg = response.content if response else None
@@ -75,24 +101,24 @@ def propose_value_classic():
                 acc_msg = response.content
     # SECOND PHASE
     if acc_msg:  # TODO: Can we break from the above loop earlier?
-        for instance_url in INSTANCES:
+        for instance_url in instances:
             response = post(instance_url + '/receive_acc',
                             {"acc_msg": acc_msg})
             ack_value_msg = response.content if response else None
             if ack_value_msg:  # TODO: HACK, every Instance should send this
                 # message itself, but it would break threading
-                for instance_url2 in INSTANCES:
+                for instance_url2 in instances:
                     post(instance_url2 + '/receive_ack_value',
                          {"ack_value_msg": ack_value_msg})
 
 
 def propose_value_fast(value):
-    for instance_url in INSTANCES:
+    for instance_url in instances:
         response = post(instance_url + '/receive_request', {"value": value})
         ack_value_msg = response.content if response else None
         if ack_value_msg:  # TODO: HACK, every Instance should send this
             # message itself, but it would break threading
-            for instance_url2 in INSTANCES:
+            for instance_url2 in instances:
                 post(instance_url2 + '/receive_ack_value',
                      {"ack_value_msg": ack_value_msg})
 
@@ -110,7 +136,7 @@ def prepare_fast():
     prepare_msg = response.content
     acc_msg = None
     # FIRST PHASE
-    for instance_url in INSTANCES:
+    for instance_url in instances:
         response = post(instance_url + '/receive_prepare',
                         {"prepare_msg": prepare_msg})
         ack_msg = response.content if response else None
@@ -121,11 +147,21 @@ def prepare_fast():
                 acc_msg = response.content
     # SECOND PHASE
     if acc_msg:  # TODO: Can we break from the above loop earlier?
-        for instance_url in INSTANCES:
+        for instance_url in instances:
             post(instance_url + '/receive_acc',
                  {"acc_msg": acc_msg})
 
 
 if __name__ == '__main__':
-    prepare_fast()
-    app.run(debug=True, host='0.0.0.0', processes=10)
+    if len(sys.argv) < 3:
+        print("Specify port and number of instances as arguments")
+        sys.exit(1)
+
+    port = int(sys.argv[1])
+    instance_count = int(sys.argv[2])
+
+    for x in range(1, instance_count + 1):
+        instance_port = port + x
+        instances.append("{}:{}".format(BASE_URL, instance_port))
+
+    app.run(debug=True, host='0.0.0.0', processes=10, port=port)
