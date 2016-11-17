@@ -46,8 +46,24 @@ def hello_world():
 
 @app.route('/api/reset', methods=['GET'])
 def reset():
-    for instance_url in instances:
-        get(instance_url + '/reset')
+    case = request.values.get('case')
+
+    if case is None or case == '1':
+        for instance_url in instances:
+            get(instance_url + '/reset')
+    elif case == '2':
+        for index, instance_url in enumerate(instances):
+            if index == 3 or index == 5:
+                get(instance_url + '/kill')
+            else:
+                get(instance_url + '/reset')
+    else:
+        for index, instance_url in enumerate(instances):
+            if index == 2 or index == 4:
+                get(instance_url + '/poison')
+            else:
+                get(instance_url + '/reset')
+
     return '', 200
 
 

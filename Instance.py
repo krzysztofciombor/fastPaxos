@@ -17,6 +17,19 @@ CORS(app)
 instance = None  # initialized in main
 
 
+@app.before_request
+def check_status():
+    if request.path in ['/reset', '/poison', '/kill']:
+        return
+
+    instance.request_count += 1
+    if instance.dying and instance.request_count > 6:
+        instance.set_active(False)
+
+    if instance.get_active() is False:
+        abort(404)
+
+
 @app.route('/heartbeat', methods=['GET'])
 def heartbeat():
     if instance.get_active() is True:
@@ -84,7 +97,26 @@ def get_learned_value():
 
 @app.route('/reset', methods=['GET'])
 def reset():
+    instance.request_count = 0
+    instance.dying = False
+    instance.set_active(True)
     instance.reset()
+    return '', 200
+
+
+@app.route('/kill', methods=['GET'])
+def kill():
+    instance.set_active(False)
+    instance.dying = False
+    instance.request_count = 0
+    return '', 200
+
+
+@app.route('/poison', methods=['GET'])
+def poison():
+    instance.dying = True
+    instance.request_count = 0
+    instance.set_active(True)
     return '', 200
 
 
@@ -97,6 +129,8 @@ class Instance(object):
         self.proposer = Proposer(self.uid, self.quorum_size)
         self.acceptor = Acceptor(self.uid)
         self.learner = Learner(self.uid, self.quorum_size)
+        self.request_count = 0
+        self.dying = False
 
     def reset(self):
         self.proposer = Proposer(self.uid, self.quorum_size)

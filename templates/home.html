@@ -183,7 +183,7 @@
         start_checking_nodes_availibility(number, nodes_count);
         start_asking_for_value(number, nodes_count);
         start_proposing_values(number);
-      }, 2000);
+      }, 1000);
     };
 
     var clear_intervals = function() {
@@ -195,7 +195,7 @@
     }
 
     var reset_coordinator = function(number) {
-      $.get(coordinator_url(number) + "/reset");
+      $.ajax({url: coordinator_url(number) + "/reset?case=" + number, async: false});
     };
 
     var start_checking_nodes_availibility = function(number, nodes_count) {
