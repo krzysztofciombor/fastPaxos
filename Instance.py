@@ -15,6 +15,11 @@ app = Flask(__name__)
 instance = None  # initialized in main
 
 
+@app.route('/heartbeat', methods=['GET'])
+def heartbeat():
+    return "Instance is working with quorum: " + str(instance.quorum_size), 200
+
+
 @app.route('/propose_value', methods=['POST'])
 def propose_value():
     value = request.values.get('value')

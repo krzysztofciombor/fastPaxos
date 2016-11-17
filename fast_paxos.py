@@ -3,6 +3,8 @@ from flask import Flask, request, abort  # type: ignore
 
 from config import INSTANCES
 
+from IPython import embed
+
 # use embed() to set up interactive endpoint
 
 app = Flask(__name__)
@@ -28,11 +30,12 @@ def post(url, params=None):
 
 @app.route('/heartbeat')
 def hello_world():
-    return 'Hello World!'
+    return 'Coordinator is working', 200
 
 
 @app.route('/api/reset', methods=['GET'])
 def reset():
+    embed()
     for instance_url in INSTANCES:
         get(instance_url + '/reset')
     return '', 200

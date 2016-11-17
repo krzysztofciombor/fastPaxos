@@ -1,0 +1,36 @@
+*** Starting uWSGI 2.0.14 (64bit) on [Thu Nov 17 06:50:03 2016] ***
+compiled with version: 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1) on 17 November 2016 06:17:09
+os: Darwin-16.1.0 Darwin Kernel Version 16.1.0: Thu Oct 13 21:26:57 PDT 2016; root:xnu-3789.21.3~60/RELEASE_X86_64
+nodename: MacBook-Pro-Michal.local
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 4
+current working directory: /Users/batman/studia/projekty/iosr/fastPaxos
+detected binary path: /usr/local/bin/uwsgi
+*** WARNING: you are running uWSGI without its master process manager ***
+your processes number limit is 709
+your memory page size is 4096 bytes
+detected max file descriptor number: 256
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:5001 fd 4
+Python version: 3.5.2 (default, Oct 11 2016, 05:05:28)  [GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.38)]
+*** Python threads support is disabled. You can enable it with --enable-threads ***
+Python main interpreter initialized at 0x7fd320d08070
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 72752 bytes (71 KB) for 1 cores
+*** Operational MODE: single process ***
+  File "./instance_wsgi.py", line 3
+    from IPython import embed()
+                             ^
+SyntaxError: invalid syntax
+unable to load app 0 (mountpoint='') (callable not found or import error)
+*** no app loaded. going in full dynamic mode ***
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI worker 1 (and the only) (pid: 20693, cores: 1)
+ * Running on http://0.0.0.0:5001/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger pin code: 149-300-642
