@@ -23,9 +23,9 @@ class Learner(object):
         if self.completed:
             return
 
-        self.proposals[ack_value_msg.proposal_value].add(
+        self.proposals[ack_value_msg.proposal_value.value].add(
             ack_value_msg.sender_uid)
 
-        if len(self.proposals[ack_value_msg.proposal_value]) == \
+        if len(self.proposals[ack_value_msg.proposal_value.value]) == \
                 self.quorum_size:
-            self.learned_value = ack_value_msg.proposal_value
+            self.learned_value = ack_value_msg.proposal_value.value

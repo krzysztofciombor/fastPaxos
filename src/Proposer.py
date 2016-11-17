@@ -2,11 +2,12 @@ from typing import Optional, Set  # noqa
 
 from src.Message import PrepareMessage, AckMessage, AcceptMessage
 from src.ProposalID import ProposalID
+from src.Value import Value, ANY
 
 
 class Proposer(object):
     leader = False  # type: bool
-    proposed_value = None  # type: Optional[int]
+    proposed_value = None  # type: Optional[Value]
     proposal_id = None  # type: ProposalID
     current_prepare_message = None  # type: Optional[PrepareMessage]
     current_accept_message = None  # type: Optional[AcceptMessage]
@@ -24,7 +25,7 @@ class Proposer(object):
         Sets the proposal value for this node iff not previously set
         """
         if self.proposed_value is None:
-            self.proposed_value = value
+            self.proposed_value = Value(value)
 
     def prepare(self) -> PrepareMessage:
         """
@@ -57,10 +58,25 @@ class Proposer(object):
             if ack_message.previous_value is not None:
                 self.proposed_value = ack_message.previous_value
 
+        # Check if consensus is reached
         if len(self.ack_messages) == self.quorum_size:
+            if self._can_send_any_message():
+                return AcceptMessage(self.uid, self.proposal_id, ANY)
             if self.proposed_value is not None:
                 return AcceptMessage(self.uid, self.proposal_id,
                                      self.proposed_value)
+
+    def _can_send_any_message(self):
+        """
+        Returns true if the proposer can send Any message to Acceptors
+        """
+        for ack in self.ack_messages:
+            if ack.previous_value:
+                return False
+        if self.proposed_value is None:
+            return True
+        else:
+            return False
 
     def _should_ignore_ack_message(self, ack_message: AckMessage) -> bool:
         """
