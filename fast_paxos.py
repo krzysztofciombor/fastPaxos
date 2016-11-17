@@ -2,9 +2,8 @@ import requests
 import sys
 from flask import Flask, request, abort  # type: ignore
 from config import BASE_URL
-from IPython import embed
 from flask import render_template
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 import json
 
 # use embed() to set up interactive endpoint
@@ -12,6 +11,7 @@ import json
 app = Flask(__name__)
 CORS(app)
 instances = []
+
 
 def select_leader():
     return instances[0]  # TODO check heartbeats
