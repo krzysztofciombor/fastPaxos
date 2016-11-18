@@ -16,7 +16,7 @@ instances = []
 
 
 def select_leader():
-    return instances[0]  # TODO check heartbeats
+    return instances[0]
 
 
 def get(url, params=None):
@@ -100,13 +100,12 @@ def propose_value_classic():
             if response.status_code == 200:
                 acc_msg = response.content
     # SECOND PHASE
-    if acc_msg:  # TODO: Can we break from the above loop earlier?
+    if acc_msg:
         for instance_url in instances:
             response = post(instance_url + '/receive_acc',
                             {"acc_msg": acc_msg})
             ack_value_msg = response.content if response else None
-            if ack_value_msg:  # TODO: HACK, every Instance should send this
-                # message itself, but it would break threading
+            if ack_value_msg:
                 for instance_url2 in instances:
                     post(instance_url2 + '/receive_ack_value',
                          {"ack_value_msg": ack_value_msg})
@@ -116,8 +115,7 @@ def propose_value_fast(value):
     for instance_url in instances:
         response = post(instance_url + '/receive_request', {"value": value})
         ack_value_msg = response.content if response else None
-        if ack_value_msg:  # TODO: HACK, every Instance should send this
-            # message itself, but it would break threading
+        if ack_value_msg:
             for instance_url2 in instances:
                 post(instance_url2 + '/receive_ack_value',
                      {"ack_value_msg": ack_value_msg})
@@ -146,7 +144,7 @@ def prepare_fast():
             if response.status_code == 200:
                 acc_msg = response.content
     # SECOND PHASE
-    if acc_msg:  # TODO: Can we break from the above loop earlier?
+    if acc_msg:
         for instance_url in instances:
             post(instance_url + '/receive_acc',
                  {"acc_msg": acc_msg})
