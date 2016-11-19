@@ -8,7 +8,7 @@ before_script:
 - openssl aes-256-cbc -K $encrypted_2f90dfa97d65_key -iv $encrypted_2f90dfa97d65_iv -in deploy_key.enc -out deploy_key -d
 - bash _scripts/install.sh
 - flake8 .
-- mypy tests/
+- mypy tests/ src/
 script: nosetests
 after_success:
 - bash _scripts/deploy.sh
